@@ -463,9 +463,9 @@ class BlobFetcher():
         if wrapped:  # drop the final incomplete batch
             self.reset()  # self.dataloader.iterators[self.split] has been reset to 0 before call self.reset(); enter the new epoch
             ix, wrapped, last_batch = self._get_next_minibatch_inds()  # shadow #data loaded by the dataloader 
-            tmp = self.split_loader.next()
+            tmp = next(iter(self.split_loader))
         else:
-            tmp = self.split_loader.next()  # shadow #data loaded by the dataloader
+            tmp = next(iter(self.split_loader))  # shadow #data loaded by the dataloader
 
         #assert tmp[-1][2] == ix, "ix not equal"
         # return to self._prefetch_process[split].get() in Dataloader.get_batch()

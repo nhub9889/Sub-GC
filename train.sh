@@ -38,7 +38,7 @@ fi
 if [ $MODEL_TYPE == "Sub_GC_Flickr" ]
 then
   echo "Using Sub-GC model on Flickr-30K"
-  python train.py  --id topdown --caption_model topdown --num_workers 0 \
+  python train.py  --id topdown --caption_model topdown --num_workers 6 \
    --learning_rate 5e-4 --learning_rate_decay_start 0 --scheduled_sampling_start 0 --learning_rate_decay_every 3 \
    --rnn_size 1000 --input_encoding_size 1000 --att_feat_size 2048 --att_hid_size 512 --val_images_use 5000 \
    --batch_size 64 --save_checkpoint_every 4000 --max_epochs 36 \

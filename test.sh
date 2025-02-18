@@ -58,7 +58,7 @@ if [ $MODEL_TYPE == "Sub_GC_Flickr" ]
 then
   echo "Using Sub-GC model on Flickr-30K"
   python test.py --dump_images 0 --dump_json 1 --num_images -1 \
-   --num_workers 0 --language_eval 1 --beam_size 2 \
+   --num_workers 6 --language_eval 1 --beam_size 2 \
    --gpn_nms_thres 0.75 --gpn_max_subg 10 \
    --model pretrained/sub_gc_flickr/model-16000.pth \
    --infos_path pretrained/sub_gc_flickr/infos_topdown-16000.pkl\

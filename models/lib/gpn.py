@@ -72,10 +72,14 @@ class gpn_layer(nn.Module):
             all_read_out = read_out[0]
 
             batch_ind = torch.arange(b).type_as(gpn_obj_ind)
-            subgraph_obj_ind = all_subgraph_obj_ind[batch_ind, gpn_ind, :].view(-1)  
-            att_feats = att_feats[torch.arange(b).view(b,1).expand(b,N).contiguous().view(-1).type_as(gpn_obj_ind),subgraph_obj_ind,:].view(b,N,L)
-            att_masks = all_subgraph_att_masks[batch_ind, gpn_ind, :]  
-            sub_read_out = all_read_out[batch_ind, gpn_ind, :].detach()  
+            subgraph_obj_ind = all_subgraph_obj_ind[batch_ind.to(torch.int64), gpn_ind.to(torch.int64), :].view(-1)
+            att_feats = att_feats[
+                        torch.arange(b).view(b, 1).expand(b, N).to(torch.int64).contiguous().view(-1),
+                        subgraph_obj_ind.to(torch.int64),
+                        :
+                        ].view(b, N, L)
+            att_masks = all_subgraph_att_masks[batch_ind.to(torch.int64), gpn_ind.to(torch.int64), :]
+            sub_read_out = all_read_out[batch_ind.to(torch.int64), gpn_ind.to(torch.int64), :].detach()
             fc_feats = self.read_out_proj(sub_read_out) 
             
             return gpn_loss, subgraph_score, att_feats, fc_feats, att_masks
@@ -87,7 +91,7 @@ class gpn_layer(nn.Module):
             sen_batch = gpn_score.size(0)
 
             all_subgraph_obj_ind = gpn_obj_ind[0].contiguous().view(-1,N)
-            att_feats = att_feats[0][all_subgraph_obj_ind.view(-1),:].view(sen_batch,N,L)
+            att_feats = att_feats[0][all_subgraph_obj_ind.view(-1).to(torch.int64),:].view(sen_batch,N,L)
             s_att_masks = att_masks[0].contiguous().view(-1, N)  
 
             read_out = read_out.view(2,b,gpn_obj_ind.size(-2),read_out.size(-1))
@@ -98,10 +102,10 @@ class gpn_layer(nn.Module):
             if self.use_nms:
                 # nms to keep the subgraphs we need
                 keep_ind = self.subgraph_nms(gpn_score, all_subgraph_obj_ind, att_masks)
-                gpn_score = gpn_score[keep_ind]
-                att_feats = att_feats[keep_ind]
-                fc_feats = fc_feats[keep_ind]
-                s_att_masks = s_att_masks[keep_ind]
+                gpn_score = gpn_score[keep_ind.to(torch.int64)]
+                att_feats = att_feats[keep_ind.to(torch.int64)]
+                fc_feats = fc_feats[keep_ind.to(torch.int64)]
+                s_att_masks = s_att_masks[keep_ind.to(torch.int64)]
 
             return gpn_loss, gpn_score, att_feats, fc_feats, s_att_masks, keep_ind
 
@@ -157,14 +161,14 @@ class gpn_layer(nn.Module):
         pos_obj_ind = gpn_obj_ind[:,0,:,:]
         neg_obj_ind = gpn_obj_ind[:,1,:,:]
         obj_batch_ind = torch.arange(b).view(b,1).expand(b,N*gpn_obj_ind.size(-2)).contiguous().view(-1).type_as(gpn_obj_ind)
-        pos_gpn_att = att_feats[obj_batch_ind, pos_obj_ind.contiguous().view(-1)]
-        neg_gpn_att = att_feats[obj_batch_ind, neg_obj_ind.contiguous().view(-1)]
+        pos_gpn_att = att_feats[obj_batch_ind.to(torch.int64), pos_obj_ind.contiguous().view(-1).to(torch.int64)]
+        neg_gpn_att = att_feats[obj_batch_ind.to(torch.int64), neg_obj_ind.contiguous().view(-1).to(torch.int64)]
         
         pos_pred_ind = gpn_pred_ind[:,0,:,:].contiguous().view(-1)
         neg_pred_ind = gpn_pred_ind[:,1,:,:].contiguous().view(-1)
         pred_batch_ind = torch.arange(b).view(b,1).expand(b,K*gpn_pred_ind.size(-2)).contiguous().view(-1).type_as(gpn_pred_ind)
-        pos_gpn_pred = x_pred[pred_batch_ind, pos_pred_ind]
-        neg_gpn_pred = x_pred[pred_batch_ind, neg_pred_ind]
+        pos_gpn_pred = x_pred[pred_batch_ind.to(torch.int64), pos_pred_ind.to(torch.int64)]
+        neg_gpn_pred = x_pred[pred_batch_ind.to(torch.int64), neg_pred_ind.to(torch.int64)]
         
         gpn_att = torch.cat((pos_gpn_att.view(-1,N,L), neg_gpn_att.view(-1,N,L)),dim=0) # pos, neg
         gpn_pred = torch.cat((pos_gpn_pred.view(-1,K,L), neg_gpn_pred.view(-1,K,L)),dim=0) # pos, neg

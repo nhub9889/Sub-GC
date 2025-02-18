@@ -60,8 +60,8 @@ class gcn_backbone(nn.Module):
         map_sobj_rel = x_obj.data.new(batch_size, N, K).zero_()
         map_oobj_rel = x_obj.data.new(batch_size, N, K).zero_()
         for i in range(batch_size):
-            map_sobj_rel[i].scatter_(0, ind_subject[i].contiguous().view(1, K), attend_score[i].contiguous().view(1,K)) # row is target, col is source
-            map_oobj_rel[i].scatter_(0, ind_object[i].contiguous().view(1, K), attend_score[i].contiguous().view(1,K)) # row is target, col is source
+            map_sobj_rel[i].scatter_(0, ind_subject[i].to(torch.int64).contiguous().view(1, K), attend_score[i].contiguous().view(1,K)) # row is target, col is source
+            map_oobj_rel[i].scatter_(0, ind_object[i].to(torch.int64).contiguous().view(1, K), attend_score[i].contiguous().view(1,K)) # row is target, col is source
         map_obj_rel = torch.stack((map_sobj_rel, map_oobj_rel), 3)  # [b, N, K, 2]
         
         return map_obj_rel

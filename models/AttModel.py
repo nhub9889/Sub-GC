@@ -15,7 +15,7 @@ import models.lib.gpn as GPN
 
 def sort_pack_padded_sequence(input, lengths):
     sorted_lengths, indices = torch.sort(lengths, descending=True)
-    tmp = pack_padded_sequence(input[indices], sorted_lengths, batch_first=True)
+    tmp = pack_padded_sequence(input[indices], sorted_lengths.cpu(), batch_first=True)
     inv_ix = indices.clone()
     inv_ix[indices] = torch.arange(0,len(indices)).type_as(inv_ix)
     return tmp, inv_ix

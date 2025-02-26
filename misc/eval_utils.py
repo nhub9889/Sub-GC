@@ -105,7 +105,7 @@ def eval_split(model, crit, loader, eval_kwargs={}, opt=None, val_model=None):
                     if not sct_mode:
                         if model.gpn: # sub-graph captioning model
                             sorted_score, sort_ind = torch.sort(subgraph_score,descending=True)
-                            seq = seqq[sort_ind].data
+                            seq = seqq[sort_ind.to(seqq.device)].data
                             subgraph_score = sorted_score.data
                             sorted_subgraph_ind = keep_nms_ind[sort_ind] # the indices are to index sub-graph in original order
                         else: # model that use full graph

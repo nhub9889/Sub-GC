@@ -408,7 +408,7 @@ class BlobFetcher():
             ix, wrapped, last_batch = self._get_next_minibatch_inds()  # shadow #data loaded by the dataloader 
             tmp = self.split_loader.next()
         else:
-            tmp = self.split_loader.next()  # shadow #data loaded by the dataloader
+            tmp = next(self.split_loader)  # shadow #data loaded by the dataloader
 
         #assert tmp[-1][2] == ix, "ix not equal"
         # return to self._prefetch_process[split].get() in Dataloader.get_batch()

@@ -30,6 +30,10 @@ To train our image captioning models, run the script
 ```
 bash train.sh MODEL_TYPE
 ```
+If you use Windows OS, run this script instead
+```
+train.bat MODEL_TYPE
+```
 by replacing `MODEL_TYPE` with one of `[Sub_GC_MRNN, Sub_GC_Kar, Full_GC_Kar, Sub_GC_Flickr, Sub_GC_Sup_Flickr]`. `MODEL_TYPE` specifies the dataset, the data split and the model used for training. See details below.
 
 1. COCO Caption Dataset
@@ -53,6 +57,10 @@ The evaluation is divided into 2 steps
 To generate captions, run the script
 ```
 bash test.sh MODEL_TYPE
+```
+If you use Windows OS, run this script instead
+```
+test.bat MODEL_TYPE
 ```
 by replacing `MODEL_TYPE` with one of `[Sub_GC_MRNN, Sub_GC_S_MRNN, Sub_GC_Kar, Full_GC_Kar, Sub_GC_Flickr, Sub_GC_Flickr_GRD, Sub_GC_Flickr_CTL, Sub_GC_Sup_Flickr_CTL]`. `MODEL_TYPE` specifies the dataset, the data split and the model used for sentence generation. See details below.
 
